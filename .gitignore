@@ -1,0 +1,6 @@
+__pycache__/
+venv/
+datos/
+logs/
+*.csv
+*.log

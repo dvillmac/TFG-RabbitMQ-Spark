@@ -1,0 +1,8 @@
+user.email=dvillmac@myuax.com
+user.name=Diego Villena Macarron
+core.repositoryformatversion=0
+core.filemode=true
+core.bare=false
+core.logallrefupdates=true
+remote.origin.url=https://github.com/dvillmac/TFG-RabbitMQ-Spark.git
+remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*

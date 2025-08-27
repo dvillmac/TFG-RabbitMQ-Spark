@@ -1,71 +1,186 @@
-import pika, json, logging, os
-from pyspark.sql import SparkSession
-from pyspark.sql.types import StructType, StringType, IntegerType
-from pyspark.sql.functions import to_timestamp
+#!/usr/bin/env python3
+# consumidor.py
+# Consumidor especializado por continente
+# Uso: python consumidor.py --continent Asia
 
-logging.basicConfig(filename='../logs/consumidor.log', level=logging.INFO, format='%(asctime)s - %(message)s')
+import pika, json, os, csv, argparse, time
+from datetime import datetime
 
-spark = SparkSession.builder.appName("ProcesadorPedidos").master("local[*]").getOrCreate()
+continente_to_port = {
+    "Asia": 5672,
+    "America": 5673,
+    "Europa": 5674
+}
 
-schema = StructType() \
-    .add("id_pedido", StringType()) \
-    .add("almacen_id", IntegerType()) \
-    .add("producto", StringType()) \
-    .add("cantidad", IntegerType()) \
-    .add("cliente", StringType()) \
-    .add("direccion", StringType()) \
-    .add("telefono", StringType()) \
-    .add("fecha", StringType())
+class ConsumidorContinente:
+    def __init__(self, continent):
+        self.continent = continent
+        self.port = continente_to_port[continent]
+        self.pedidos_procesados = []
+        self.batch = []
+        self.BATCH_SIZE = 5
+        self.total_procesados = 0
+        
+    def conectar_rabbitmq(self):
+        """Establece conexión con RabbitMQ"""
+        creds = pika.PlainCredentials('guest', 'guest')
+        params = pika.ConnectionParameters('localhost', port=self.port, credentials=creds)
+        self.connection = pika.BlockingConnection(params)
+        self.channel = self.connection.channel()
+        self.channel.queue_declare(queue='pedidos', durable=True)
+        print(f"[Consumer-{self.continent}] ✅ Conectado a puerto {self.port}")
 
-batch = []
-output_path = "../datos/pedidos"
-os.makedirs(output_path, exist_ok=True)
+    def guardar_batch(self, pedidos):
+        """Guarda un lote de pedidos en CSV"""
+        if not pedidos:
+            return
+            
+        os.makedirs(os.path.join("..","datos","pedidos"), exist_ok=True)
+        fecha = datetime.now().strftime("%Y%m%d_%H%M%S")
+        path = os.path.join("..","datos","pedidos", f"{self.continent}_pedidos_{fecha}.csv")
+        
+        # Definir todas las columnas posibles
+        fieldnames = [
+            'ID Pedido', 'Productor', 'Almacén', 'Producto', 'Cantidad', 
+            'Precio Unitario', 'Precio Total', 'Cliente', 'Dirección', 
+            'Teléfono', 'Email', 'Fecha', 'Continente', 'Estado', 
+            'Fecha Procesado'
+        ]
+        
+        with open(path, 'w', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(pedidos)
+        
+        print(f"[Consumer-{self.continent}] 💾 Guardados {len(pedidos)} pedidos en {path}")
+        
+        # Log en archivo de registro general
+        self.escribir_log(f"Procesados {len(pedidos)} pedidos - Total acumulado: {self.total_procesados}")
 
-def callback(ch, method, properties, body):
-    global batch
-    pedido = json.loads(body)
-    batch.append(pedido)
-    logging.info(f"Pedido recibido: {pedido}")
+    def escribir_log(self, mensaje):
+        """Escribe en el log general del sistema"""
+        log_path = os.path.join("..","datos","logs","registro.log")
+        os.makedirs(os.path.dirname(log_path), exist_ok=True)
+        with open(log_path, 'a', encoding='utf-8') as f:
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            f.write(f"[{timestamp}] Consumer-{self.continent}: {mensaje}\n")
 
-    if len(batch) >= 10:
-        df = spark.createDataFrame(batch, schema=schema)
-        df = df.withColumn("fecha", to_timestamp("fecha"))
-        df.write.mode("append").csv(output_path, header=True)
-        batch.clear()
-        print("✔ Lote procesado y guardado")
+    def procesar_pedido(self, pedido_raw):
+        """Procesa un pedido individual y lo añade al batch"""
+        try:
+            pedido = json.loads(pedido_raw.decode())
+            
+            # Enriquecer el pedido con información de procesamiento
+            pedido_procesado = {
+                'ID Pedido': pedido.get('id', 'N/A'),
+                'Productor': pedido.get('productor', 'N/A'),
+                'Almacén': pedido.get('almacen', 'N/A'),
+                'Producto': pedido.get('producto', 'N/A'),
+                'Cantidad': pedido.get('cantidad', 0),
+                'Precio Unitario': pedido.get('precio_unitario', 0),
+                'Precio Total': pedido.get('precio_total', 0),
+                'Cliente': pedido.get('cliente', 'N/A'),
+                'Dirección': pedido.get('direccion', 'N/A'),
+                'Teléfono': pedido.get('telefono', 'N/A'),
+                'Email': pedido.get('email', 'N/A'),
+                'Fecha': pedido.get('fecha', 'N/A'),
+                'Continente': pedido.get('continente', self.continent),
+                'Estado': 'procesado',
+                'Fecha Procesado': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            }
+            
+            self.batch.append(pedido_procesado)
+            self.total_procesados += 1
+            
+            print(f"[Consumer-{self.continent}] 📦 Procesado: {pedido.get('id')} de {pedido.get('productor', 'Unknown')} - Producto: {pedido.get('producto', 'N/A')} (€{pedido.get('precio_total', 0)})")
+            
+            # Si el batch está completo, guardarlo
+            if len(self.batch) >= self.BATCH_SIZE:
+                self.guardar_batch(self.batch)
+                self.batch = []
+                
+        except Exception as e:
+            print(f"[Consumer-{self.continent}] ❌ Error procesando pedido: {e}")
 
-conexion = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
-canal = conexion.channel()
-canal.queue_declare(queue='pedidos', durable=True)
-canal.basic_consume(queue='pedidos', on_message_callback=callback, auto_ack=True)
+    def callback(self, ch, method, properties, body):
+        """Callback para procesar mensajes de RabbitMQ"""
+        self.procesar_pedido(body)
+        # Simular tiempo de procesamiento
+        time.sleep(0.1)
 
-conexion = pika.BlockingConnection(pika.ConnectionParameters(
-    host='localhost',
-    credentials=pika.PlainCredentials('guest', 'guest')
-))
-print("[*] Esperando pedidos...")
-try:
-    canal.start_consuming()
-except KeyboardInterrupt:
-    canal.stop_consuming()
-    conexion.close()
-    spark.stop()
-    print("✘ Finalizado por usuario")
-    logging.info("Consumo detenido por el usuario")
-except Exception as e:
-    logging.error(f"Error en el consumidor: {e}")
-    print(f"✘ Error: {e}")
-finally:
-    if 'conexion' in locals():
-        conexion.close()
-    if 'spark' in locals():
-        spark.stop()
-    print("✔ Conexión cerrada y Spark detenido")
-    logging.info("Conexión cerrada y Spark detenido")
-    print("✔ Proceso finalizado")
-    logging.info("Proceso finalizado")
-    print("✔ Todos los pedidos procesados y guardados")
-    logging.info("Todos los pedidos procesados y guardados")
-    print("✔ Logs generados en ../logs/consumidor.log")
-    logging.info("Logs generados en ../logs/consumidor.log")
-    print("✔ Datos guardados en ../datos/pedidos")         
+    def iniciar_consumo(self):
+        """Inicia el consumo de mensajes"""
+        print(f"[Consumer-{self.continent}] 🚀 Iniciando consumo en continente {self.continent}")
+        print(f"[Consumer-{self.continent}] 📡 Escuchando en puerto {self.port}...")
+        
+        self.escribir_log(f"Iniciado consumidor para {self.continent}")
+        
+        self.channel.basic_qos(prefetch_count=1)
+        self.channel.basic_consume(
+            queue='pedidos', 
+            on_message_callback=self.callback, 
+            auto_ack=True
+        )
+        
+        try:
+            self.channel.start_consuming()
+        except KeyboardInterrupt:
+            print(f"\n[Consumer-{self.continent}] 🛑 Interrumpido por usuario")
+        except Exception as e:
+            print(f"[Consumer-{self.continent}] ❌ Excepción: {e}")
+        finally:
+            self.finalizar()
+
+    def finalizar(self):
+        """Finaliza el consumidor y guarda datos pendientes"""
+        # Guardar batch pendiente si existe
+        if self.batch:
+            print(f"[Consumer-{self.continent}] 💾 Guardando {len(self.batch)} pedidos pendientes...")
+            self.guardar_batch(self.batch)
+        
+        # Cerrar conexión
+        try:
+            if hasattr(self, 'connection') and not self.connection.is_closed:
+                self.connection.close()
+        except:
+            pass
+        
+        print(f"[Consumer-{self.continent}] ✅ Finalizado - Total procesados: {self.total_procesados} pedidos")
+        self.escribir_log(f"Finalizado - Total procesados: {self.total_procesados} pedidos")
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Consumidor de pedidos por continente",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Ejemplos de uso:
+  python consumidor.py --continent Asia
+  python consumidor.py --continent America  
+  python consumidor.py --continent Europa
+        """
+    )
+    parser.add_argument(
+        "--continent", 
+        required=True, 
+        choices=["Asia","America","Europa"],
+        help="Continente a procesar (Asia, America, Europa)"
+    )
+    
+    args = parser.parse_args()
+    
+    print("=" * 50)
+    print(f"🌍 CONSUMIDOR DE PEDIDOS - {args.continent.upper()}")
+    print("=" * 50)
+    
+    consumidor = ConsumidorContinente(args.continent)
+    
+    try:
+        consumidor.conectar_rabbitmq()
+        consumidor.iniciar_consumo()
+    except Exception as e:
+        print(f"❌ Error crítico: {e}")
+    finally:
+        consumidor.finalizar()
+
+if __name__ == "__main__":
+    main()

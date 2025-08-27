@@ -1,55 +1,32 @@
 version: '3.8'
-
 services:
-  rabbitmq:
+  rabbitmq_asia:
     image: rabbitmq:3-management
-    container_name: rabbitmq
+    container_name: rabbitmq_asia
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "5672:5672"    # AMQP Asia mapped to host 5672
+      - "15672:15672"  # Management UI Asia
+
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-    networks:
-      - spark-network
 
-  spark-master:
-    image: bitnami/spark:latest
-    container_name: spark-master
-    environment:
-      SPARK_MODE: master
-      SPARK_RPC_AUTHENTICATION_ENABLED: no
-      SPARK_RPC_ENCRYPTION_ENABLED: no
-      SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED: no
-      SPARK_SSL_ENABLED: no
+  rabbitmq_america:
+    image: rabbitmq:3-management
+    container_name: rabbitmq_america
     ports:
-      - "8080:8080"
-      - "7077:7077"
-    networks:
-      - spark-network
-
-  spark-worker:
-    image: bitnami/spark:latest
-    container_name: spark-worker
+      - "5673:5672"    # AMQP America on host 5673
+      - "15673:15672"  # Management UI America on host 15673
     environment:
-      SPARK_MODE: worker
-      SPARK_MASTER_URL: spark://spark-master:7077
-      SPARK_WORKER_MEMORY: 1G
-      SPARK_WORKER_CORES: 1
-      SPARK_RPC_AUTHENTICATION_ENABLED: no
-      SPARK_RPC_ENCRYPTION_ENABLED: no
-      SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED: no
-      SPARK_SSL_ENABLED: no
-    depends_on:
-      - spark-master
-    networks:
-      - spark-network
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
 
-volumes:
-  rabbitmq_data:
-
-networks:
-  spark-network:
-    driver: bridge
+  rabbitmq_europa:
+    image: rabbitmq:3-management
+    container_name: rabbitmq_europa
+    ports:
+      - "5674:5672"    # AMQP Europa on host 5674
+      - "15674:15672"  # Management UI Europa on host 15674
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest

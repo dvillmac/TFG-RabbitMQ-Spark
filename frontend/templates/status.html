@@ -1,0 +1,10 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h2>Estado del Sistema</h2>
+<ul class="list-group">
+  <li class="list-group-item d-flex justify-content-between"><span>RabbitMQ</span><span class="badge bg-{{ 'success' if status.rabbitmq else 'danger' }}">{{ 'Activo' if status.rabbitmq else 'Inactivo' }}</span></li>
+  <li class="list-group-item d-flex justify-content-between"><span>Archivos CSV</span><span class="badge bg-{{ 'success' if status.csv else 'danger' }}">{{ 'Generados' if status.csv else 'Vacío' }}</span></li>
+  <li class="list-group-item d-flex justify-content-between"><span>Logs</span><span class="badge bg-{{ 'success' if status.logs else 'danger' }}">{{ 'Presentes' if status.logs else 'Faltan' }}</span></li>
+</ul>
+{% endblock %}
+

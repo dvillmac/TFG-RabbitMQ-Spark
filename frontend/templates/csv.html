@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Pedidos Procesados</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Pedidos procesados</h1>
+        {% if pedidos %}
+        <table>
+            <thead>
+                <tr>
+                    {% for campo in pedidos[0].keys() %}
+                        <th>{{ campo }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for pedido in pedidos %}
+                <tr>
+                    {% for valor in pedido.values() %}
+                        <td>{{ valor }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p class="info">No se encontraron pedidos procesados.</p>
+        {% endif %}
+        <a href="/" class="back-btn">← Volver al inicio</a>
+    </div>
+</body>
+</html>
+

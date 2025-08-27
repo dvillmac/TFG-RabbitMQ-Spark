@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Logs del sistema</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Últimos logs del sistema</h1>
+        <pre class="logs">
+            {% for linea in logs %}
+                {{ linea }}
+            {% endfor %}
+        </pre>
+        <a href="/" class="back-btn">← Volver al inicio</a>
+    </div>
+</body>
+</html>

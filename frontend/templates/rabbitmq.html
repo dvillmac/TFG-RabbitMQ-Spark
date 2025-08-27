@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Estado de RabbitMQ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Cola de RabbitMQ: pedidos</h1>
+        <p class="info">📦 Mensajes actuales en la cola: <strong>{{ messages }}</strong></p>
+        <a href="/" class="back-btn">← Volver al inicio</a>
+    </div>
+</body>
+</html>

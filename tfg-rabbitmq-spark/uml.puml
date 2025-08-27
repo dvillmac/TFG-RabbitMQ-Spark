@@ -1,0 +1,97 @@
+@startuml tfg-rabbitmq-spark
+!theme spacelab
+
+' Clases principales
+class "ConsumidorContinente" {
+    - continent: str
+    - port: int
+    - pedidos_procesados
+    - batch
+    - BATCH_SIZE: int
+    - total_procesados
+    - connection
+    - channel
+    --
+    + conectar_rabbitmq()
+    + guardar_batch(pedidos)
+    + escribir_log(mensaje)
+    + procesar_pedido(pedido_raw)
+    + callback(ch, method, properties, body)
+    + iniciar_consumo()
+    + finalizar()
+}
+
+class "Pedido" {
+    - id
+    - productor
+    - almacen
+    - producto
+    - cantidad
+    - precio_unitario
+    - precio_total
+    - cliente
+    - direccion
+    - telefono
+    - email
+    - fecha
+    - continente
+    - estado
+}
+
+class "Productor (worker)" {
+    - producer_id: str
+    --
+    + generate_order(i, producer_id)
+    + send_to_continent(pedido, continent, producer_id)
+}
+
+class "FlaskApp" {
+    + start_process(name, cmd, cwd)
+    + stop_process(name)
+    + get_queue_info(continent)
+    + cargar_estadisticas_produccion()
+    + obtener_pedidos_procesados()
+    + api_queue_stats()
+    + api_system_status()
+    + csv_download(filename)
+}
+
+class "Vistas HTML" {
+    - layout.html
+    - dashboard.html
+    - index.html
+    - csv.html
+    - logs.html
+    - queue.html
+    - rabbitmq.html
+    - status.html
+}
+
+class "style.css" 
+
+class "run_all.sh" {
+    - activa entorno virtual
+    - inicia Docker RabbitMQ
+    - ejecuta productores y consumidores en terminales nuevas
+    - lanza FlaskApp
+}
+
+class "Dockerfile" {
+    - define imagen python
+    - copia proyecto
+    - instala dependencias
+    - expone puerto 5000
+    - ejecuta app.py
+}
+
+' Relaciones
+ConsumidorContinente --> Pedido : procesa
+Productor (worker) --> Pedido : genera
+FlaskApp --> Productor (worker) : administra
+FlaskApp --> "Vistas HTML" : renderiza / utiliza
+"Vistas HTML" --> style.css : usa estilos
+run_all.sh --> FlaskApp : invoca
+run_all.sh --> Productor (worker) : inicia / detiene
+run_all.sh --> ConsumidorContinente : inicia / detiene
+
+@enduml

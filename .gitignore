@@ -4,3 +4,9 @@ datos/
 logs/
 *.csv
 *.log
+venv/
+__pycache__/
+*.pyc
+*.log
+*.csv
+.DS_Store

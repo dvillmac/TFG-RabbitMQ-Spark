@@ -6,12 +6,14 @@
     <title>TFG Dashboard - Sistema Completo</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             color: #333;
         }
+        
         .header {
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(10px);
@@ -21,34 +23,41 @@
             top: 0;
             z-index: 100;
         }
+        
         .header h1 {
             text-align: center;
             color: #2c3e50;
             font-size: 2.5rem;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
+        
         .container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 2rem;
         }
+        
         .flash-messages {
             margin-bottom: 2rem;
         }
+        
         .flash {
             padding: 1rem;
             border-radius: 8px;
             margin-bottom: 1rem;
             font-weight: bold;
         }
+        
         .flash.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
         .flash.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
             margin-bottom: 2rem;
         }
+        
         .card {
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(10px);
@@ -58,10 +67,12 @@
             border: 1px solid rgba(255,255,255,0.2);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+        
         .card:hover {
             transform: translateY(-5px);
             box-shadow: 0 12px 40px rgba(0,0,0,0.15);
         }
+        
         .card h3 {
             color: #2c3e50;
             margin-bottom: 1rem;
@@ -69,6 +80,7 @@
             border-bottom: 2px solid #3498db;
             padding-bottom: 0.5rem;
         }
+        
         .big-number {
             font-size: 3rem;
             font-weight: bold;
@@ -77,12 +89,14 @@
             margin: 1rem 0;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
+        
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 1rem;
             margin: 1rem 0;
         }
+        
         .stat-item {
             text-align: center;
             padding: 1rem;
@@ -90,17 +104,20 @@
             border-radius: 8px;
             border: 1px solid #dee2e6;
         }
+        
         .stat-number {
             font-size: 2rem;
             font-weight: bold;
             color: #495057;
             display: block;
         }
+        
         .stat-label {
             color: #6c757d;
             font-size: 0.9rem;
             margin-top: 0.5rem;
         }
+        
         .producer-table, .orders-table {
             width: 100%;
             border-collapse: collapse;
@@ -110,12 +127,14 @@
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
+        
         .producer-table th, .producer-table td,
         .orders-table th, .orders-table td {
             padding: 12px;
             text-align: center;
             border-bottom: 1px solid #eee;
         }
+        
         .producer-table th, .orders-table th {
             background: linear-gradient(45deg, #667eea, #764ba2);
             color: white;
@@ -124,18 +143,22 @@
             font-size: 0.9rem;
             letter-spacing: 0.5px;
         }
+        
         .producer-table tr:nth-child(even), .orders-table tr:nth-child(even) {
             background: #f8f9fa;
         }
+        
         .producer-table tr:hover, .orders-table tr:hover {
             background: #e3f2fd;
         }
+        
         .controls {
             display: flex;
             gap: 0.5rem;
             flex-wrap: wrap;
             margin: 1rem 0;
         }
+        
         .btn {
             padding: 0.75rem 1.5rem;
             border: none;
@@ -147,16 +170,20 @@
             display: inline-block;
             text-align: center;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            color: white;
         }
-        .btn-primary { background: linear-gradient(45deg, #667eea, #764ba2); color: white; }
-        .btn-success { background: linear-gradient(45deg, #56ab2f, #a8e6cf); color: white; }
-        .btn-warning { background: linear-gradient(45deg, #f093fb, #f5576c); color: white; }
-        .btn-danger { background: linear-gradient(45deg, #fc466b, #3f5efb); color: white; }
-        .btn-info { background: linear-gradient(45deg, #3ca55c, #b5ac49); color: white; }
+        
+        .btn-primary { background: linear-gradient(45deg, #667eea, #764ba2); }
+        .btn-success { background: linear-gradient(45deg, #56ab2f, #a8e6cf); }
+        .btn-warning { background: linear-gradient(45deg, #f093fb, #f5576c); }
+        .btn-danger { background: linear-gradient(45deg, #fc466b, #3f5efb); }
+        .btn-info { background: linear-gradient(45deg, #3ca55c, #b5ac49); }
+        
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
+        
         .status-indicator {
             display: inline-block;
             width: 12px;
@@ -164,8 +191,10 @@
             border-radius: 50%;
             margin-right: 0.5rem;
         }
+        
         .status-online { background: #28a745; }
         .status-offline { background: #dc3545; }
+        
         .queue-status {
             display: flex;
             justify-content: space-between;
@@ -176,11 +205,13 @@
             margin: 0.5rem 0;
             border-left: 4px solid #3498db;
         }
+        
         .queue-info {
             display: flex;
             gap: 1rem;
             flex-wrap: wrap;
         }
+        
         .queue-metric {
             background: white;
             padding: 0.5rem 1rem;
@@ -188,9 +219,11 @@
             font-size: 0.9rem;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
+        
         .wide-card {
             grid-column: 1 / -1;
         }
+        
         .logs-container {
             background: #1e1e1e;
             color: #f8f9fa;
@@ -202,6 +235,7 @@
             overflow-y: auto;
             line-height: 1.4;
         }
+        
         .real-time-indicator {
             display: inline-block;
             width: 8px;
@@ -211,11 +245,13 @@
             margin-right: 0.5rem;
             animation: pulse 2s infinite;
         }
+        
         @keyframes pulse {
             0% { opacity: 1; }
             50% { opacity: 0.5; }
             100% { opacity: 1; }
         }
+        
         .progress-bar {
             width: 100%;
             height: 20px;
@@ -224,17 +260,20 @@
             overflow: hidden;
             margin: 0.5rem 0;
         }
+        
         .progress-fill {
             height: 100%;
             background: linear-gradient(45deg, #667eea, #764ba2);
             transition: width 0.3s ease;
         }
+        
         .csv-files-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 1rem;
             margin: 1rem 0;
         }
+        
         .csv-file-card {
             background: white;
             padding: 1rem;
@@ -243,10 +282,23 @@
             text-align: center;
             transition: transform 0.2s ease;
         }
+        
         .csv-file-card:hover {
             transform: scale(1.02);
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
+
+        .continent-badge {
+            padding: 2px 8px; 
+            border-radius: 12px; 
+            font-size: 0.8rem; 
+            font-weight: bold;
+        }
+
+        .continent-asia { background: #e3f2fd; color: #1565c0; }
+        .continent-america { background: #f3e5f5; color: #7b1fa2; }
+        .continent-europa { background: #e8f5e8; color: #2e7d32; }
+        
         @media (max-width: 768px) {
             .container { padding: 1rem; }
             .grid { grid-template-columns: 1fr; }
@@ -256,18 +308,17 @@
     </style>
 </head>
 <body>
-<div class="header">
-    <h1>🚀 TFG Dashboard - Sistema Completo de Pedidos</h1>
-    <div style="text-align: center; margin-top: 0.5rem; color: #666;">
-        <span class="real-time-indicator"></span>
-        Sistema en tiempo real - 6 Productores | 3 Consumidores | RabbitMQ
+    <div class="header">
+        <h1>TFG Dashboard - Sistema Completo de Pedidos</h1>
+        <div style="text-align: center; margin-top: 0.5rem; color: #666;">
+            <span class="real-time-indicator"></span>
+            Sistema en tiempo real - 6 Productores | 3 Consumidores | RabbitMQ
+        </div>
     </div>
-</div>
 
-<div class="container">
-
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
+    <div class="container">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
         <div class="flash-messages">
             {% for category, message in messages %}
@@ -275,11 +326,307 @@
             {% endfor %}
         </div>
         {% endif %}
-    {% endwith %}
+        {% endwith %}
 
-    <!-- Aquí continuarías con todas las demás secciones usando el mismo patrón de seguridad: -->
-    <!-- Uso de get() para diccionarios, {% if lista %} para listas, cierre de todas las etiquetas. -->
+        <!-- Estadísticas Principales -->
+        <div class="grid">
+            <!-- Total de Pedidos -->
+            <div class="card">
+                <h3>Total de Pedidos</h3>
+                <div class="big-number" id="total-pedidos">{{ total_pedidos }}</div>
+                <div style="text-align: center; color: #666; font-size: 0.9rem;">
+                    Pedidos procesados en total
+                </div>
+            </div>
 
-</div> <!-- /container -->
+            <!-- Distribución por Continente -->
+            <div class="card">
+                <h3>Distribución por Continente</h3>
+                <div class="stats-grid">
+                    {% for continente, cantidad in region_count.items() %}
+                    <div class="stat-item">
+                        <span class="stat-number" id="region-{{ continente.lower() }}">{{ cantidad }}</span>
+                        <div class="stat-label">{{ continente }}</div>
+                        {% if total_pedidos > 0 %}
+                        <div class="progress-bar">
+                            <div class="progress-fill" data-width="{{ (cantidad/total_pedidos)*100 }}"></div>
+                        </div>
+                        <small>{{ "%.1f"|format((cantidad/total_pedidos)*100) }}%</small>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Control de Productores -->
+            <div class="card">
+                <h3>Control de Productores</h3>
+                <div style="text-align: center; margin-bottom: 1rem;">
+                    <div style="font-size: 1.5rem; margin: 0.5rem 0;">
+                        Estado: 
+                        {% if process_status.producers %}
+                            <span style="color: green;">Activo</span>
+                        {% else %}
+                            <span style="color: red;">Inactivo</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="controls" style="justify-content: center;">
+                    <a href="{{ url_for('start_all_producers') }}" class="btn btn-success">Ejecutar 6 Productores</a>
+                    <a href="{{ url_for('stop_all_producers') }}" class="btn btn-danger">Detener Productores</a>
+                    <a href="{{ url_for('reset_stats') }}" class="btn btn-warning">Reset Stats</a>
+                </div>
+                {% if stats_produccion %}
+                <div style="margin-top: 1rem; text-align: center; font-size: 0.9rem; color: #666;">
+                    Última ejecución: {{ stats_produccion.timestamp }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Estadísticas Detalladas por Productor -->
+        <div class="card wide-card">
+            <h3>Estadísticas Detalladas por Productor</h3>
+            {% if producer_stats %}
+            <table class="producer-table">
+                <thead>
+                    <tr>
+                        <th>Productor</th>
+                        <th>Asia</th>
+                        <th>América</th>
+                        <th>Europa</th>
+                        <th>Total</th>
+                        <th>Distribución</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producer_id, data in producer_stats.items() %}
+                    {% set total_prod = data.Asia + data.America + data.Europa %}
+                    <tr>
+                        <td><strong>{{ producer_id }}</strong></td>
+                        <td>{{ data.Asia }}</td>
+                        <td>{{ data.America }}</td>
+                        <td>{{ data.Europa }}</td>
+                        <td><strong>{{ total_prod }}</strong></td>
+                        <td>
+                            {% if total_prod > 0 %}
+                            <small>
+                                A:{{ "%.0f"|format((data.Asia/total_prod)*100) }}% 
+                                Am:{{ "%.0f"|format((data.America/total_prod)*100) }}% 
+                                E:{{ "%.0f"|format((data.Europa/total_prod)*100) }}%
+                            </small>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div style="text-align: center; padding: 2rem; color: #666;">
+                <p>No hay estadísticas disponibles.</p>
+                <p>Ejecuta primero los 6 productores para generar datos.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Estado de RabbitMQ y Colas -->
+        <div class="card wide-card">
+            <h3>Estado de RabbitMQ y Colas en Tiempo Real</h3>
+            <div class="grid">
+                {% for continent in continents %}
+                <div class="queue-status">
+                    <div>
+                        <h4>
+                            {% if rabbit_status[continent] %}
+                                <span class="status-indicator status-online"></span>
+                            {% else %}
+                                <span class="status-indicator status-offline"></span>
+                            {% endif %}
+                            Cola {{ continent }}
+                        </h4>
+                        <div class="queue-info">
+                            <span class="queue-metric">Mensajes: <strong id="messages-{{ continent.lower() }}">{{ queue_info[continent].messages }}</strong></span>
+                            <span class="queue-metric">Pendientes: <strong id="ready-{{ continent.lower() }}">{{ queue_info[continent].messages_ready }}</strong></span>
+                            <span class="queue-metric">Consumidores: <strong id="consumers-{{ continent.lower() }}">{{ queue_info[continent].consumers }}</strong></span>
+                        </div>
+                    </div>
+                    <div class="controls">
+                        <a href="{{ url_for('start_consumer_route', continent=continent) }}" class="btn btn-success">Start Consumer</a>
+                        <a href="{{ url_for('stop_consumer_route', continent=continent) }}" class="btn btn-danger">Stop</a>
+                        <a href="{{ url_for('view_queue', continent=continent) }}" class="btn btn-info">Ver Cola</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Estados de Procesos -->
+        <div class="card">
+            <h3>Estado de Procesos</h3>
+            <div style="margin: 1rem 0;">
+                <div style="margin-bottom: 0.5rem;">
+                    <strong>Productores:</strong> 
+                    {% if process_status.producers %}
+                        <span style="color: green;">Ejecutándose</span>
+                    {% else %}
+                        <span style="color: red;">Detenido</span>
+                    {% endif %}
+                </div>
+                {% for continent in continents %}
+                <div style="margin-bottom: 0.5rem;">
+                    <strong>Consumer {{ continent }}:</strong>
+                    {% if process_status['consumer_' + continent] %}
+                        <span style="color: green;">Activo</span>
+                    {% else %}
+                        <span style="color: red;">Inactivo</span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Contenedores Docker -->
+        <div class="card">
+            <h3>Contenedores Docker</h3>
+            <div style="font-family: monospace; background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                {% for container in containers %}
+                <div style="margin-bottom: 0.5rem;">{{ container }}</div>
+                {% endfor %}
+            </div>
+            <div class="controls">
+                <a href="{{ url_for('restart_docker') }}" class="btn btn-warning">Reiniciar Docker</a>
+            </div>
+        </div>
+
+        <!-- Últimos Pedidos Procesados -->
+        <div class="card wide-card">
+            <h3>Últimos Pedidos Procesados (Tiempo Real)</h3>
+            {% if latest_orders %}
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>ID Pedido</th>
+                        <th>Productor</th>
+                        <th>Continente</th>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Cliente</th>
+                        <th>Precio Total</th>
+                        <th>Fecha Procesado</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="orders-table-body">
+                    {% for order in latest_orders[:15] %}
+                    <tr>
+                        <td><code>{{ order.get('ID Pedido', '-') }}</code></td>
+                        <td><strong>{{ order.get('Productor', '-') }}</strong></td>
+                        <td>
+                            {% set continent = order.get('Continente', '') %}
+                            {% if continent == 'Asia' %}
+                                <span class="continent-badge continent-asia">{{ continent }}</span>
+                            {% elif continent == 'America' %}
+                                <span class="continent-badge continent-america">{{ continent }}</span>
+                            {% else %}
+                                <span class="continent-badge continent-europa">{{ continent }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ order.get('Producto', '-') }}</td>
+                        <td><strong>{{ order.get('Cantidad', '-') }}</strong></td>
+                        <td>{{ order.get('Cliente', '-') }}</td>
+                        <td><strong>€{{ order.get('Precio Total', '0') }}</strong></td>
+                        <td>{{ order.get('Fecha Procesado', order.get('Fecha', '-')) }}</td>
+                        <td>
+                            <span style="color: green; font-weight: bold;">✅ {{ order.get('Estado', 'Procesado') }}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 1rem;">
+                <a href="{{ url_for('view_details') }}" class="btn btn-primary">Ver Todos los Pedidos</a>
+            </div>
+            {% else %}
+            <div style="text-align: center; padding: 2rem; color: #666;">
+                <p>No hay pedidos procesados aún.</p>
+                <p>Inicia los productores y consumidores para ver pedidos aquí.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Archivos CSV Generados -->
+        <div class="card wide-card">
+            <h3>Archivos CSV Generados</h3>
+            {% if csv_files %}
+            <div class="csv-files-grid">
+                {% for file in csv_files %}
+                <div class="csv-file-card">
+                    <div style="font-weight: bold; margin-bottom: 0.5rem;">{{ file.name }}</div>
+                    <div style="color: #666; margin-bottom: 1rem;">{{ file.size }} KB</div>
+                    <a href="{{ url_for('csv_download', filename=file.name) }}" class="btn btn-info">Descargar</a>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div style="text-align: center; padding: 2rem; color: #666;">
+                <p>No hay archivos CSV generados aún.</p>
+                <p>Los consumidores generarán archivos CSV cuando procesen pedidos.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Logs del Sistema -->
+        <div class="card wide-card">
+            <h3>Logs del Sistema (Tiempo Real)</h3>
+            <div class="logs-container" id="system-logs">
+                {% if logs %}
+                    {% for line in logs %}{{ line }}{% endfor %}
+                {% else %}
+                    [Sistema] No hay logs disponibles aún...
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Aplicar anchos de barras de progreso
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.progress-fill').forEach(function(el) {
+                const width = el.getAttribute('data-width');
+                if (width) {
+                    el.style.width = width + '%';
+                }
+            });
+        });
+
+        // Auto-refresh de estadísticas cada 10 segundos
+        function updateStats() {
+            fetch('/api/queue_stats')
+                .then(response => response.json())
+                .then(data => {
+                    // Actualizar información de colas
+                    Object.keys(data).forEach(continent => {
+                        const continentLower = continent.toLowerCase();
+                        const messagesEl = document.getElementById('messages-' + continentLower);
+                        const readyEl = document.getElementById('ready-' + continentLower);
+                        const consumersEl = document.getElementById('consumers-' + continentLower);
+                        
+                        if (messagesEl) messagesEl.textContent = data[continent].messages || 0;
+                        if (readyEl) readyEl.textContent = data[continent].messages_ready || 0;
+                        if (consumersEl) consumersEl.textContent = data[continent].consumers || 0;
+                    });
+                })
+                .catch(err => console.log('Error actualizando stats:', err));
+        }
+
+        // Actualizar cada 10 segundos
+        setInterval(updateStats, 10000);
+        
+        // Actualizar inmediatamente al cargar
+        updateStats();
+        
+        console.log('TFG Dashboard cargado correctamente');
+        console.log('Estadísticas actualizándose cada 10 segundos');
+    </script>
 </body>
 </html>
